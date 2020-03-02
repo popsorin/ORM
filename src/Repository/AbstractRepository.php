@@ -18,7 +18,7 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * https://www.php.net/manual/en/class.pdo.php
      *
-     * @var \PDO
+     * @var PDO
      */
     protected $pdo;
 
@@ -43,7 +43,7 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * AbstractRepository constructor.
      *
-     * @param \PDO $pdo
+     * @param PDO $pdo
      * @param string $entityName
      * @param HydratorInterface $hydrator
      */

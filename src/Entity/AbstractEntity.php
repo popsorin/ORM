@@ -15,6 +15,11 @@ use ReallyOrm\Repository\RepositoryInterface;
 abstract class AbstractEntity implements EntityInterface
 {
     /**
+     * @var int
+     * @MappedOn id
+     */
+    protected $id;
+    /**
      * @var RepositoryManagerInterface
      */
     protected $repositoryManager;
@@ -71,5 +76,13 @@ abstract class AbstractEntity implements EntityInterface
         }
 
         $this->getRepository()->delete($this);
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 }

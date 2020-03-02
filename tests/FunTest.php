@@ -62,7 +62,7 @@ class FunTest extends TestCase
         $this->assertEquals(true, $result);
     }
 
-    public function testUpdateUser(): void
+    public function testUpdateUser()
     {
         $user = $this->userRepo->find(1);
         $user->setEmail('other email');
