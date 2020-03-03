@@ -49,37 +49,58 @@ class FunTest extends TestCase
         $this->userRepo = new UserRepository($this->pdo, User::class, $this->hydrator);
         $this->repoManager = new RepositoryManager([$this->userRepo]);
     }
+//
+//
+//    public function testCreateUser(): void
+//    {
+//        $user = new User();
+//        $user->setName('Lica');
+//        $user->setEmail('VasiLica');
+//        $user->setId(2);
+//        $this->repoManager->register($user);
+//        $result = $user->save();
+//
+//        $this->assertEquals(true, $result);
+//    }
 
+//    public function testDelete(): void
+//    {
+//        $user = new User();
+//        $user->setName('Lica');
+//        $user->setEmail('VasiLica');
+//        $user->setId(5);
+//        $this->repoManager->register($user);
+//        $deleted = $this->userRepo->delete($user);
+//
+//        $this->assertEquals(true, $deleted);
+//    }
 
-    public function testCreateUser(): void
-    {
-        $user = new User();
-        $user->setName('ciwawa');
-        $user->setEmail('email');
-        $this->repoManager->register($user);
-        $result = $user->save();
-
-        $this->assertEquals(true, $result);
-    }
-
-    public function testUpdateUser()
-    {
-        $user = $this->userRepo->find(1);
-        $user->setEmail('other email');
-
-        //echo $user->getId();
-        //echo $user->getEmail();
-
-        $result = $user->save();
-
-        $this->assertEquals(true, $result);
-    }
+//    public function testUpdateUser()
+//    {
+//        $user = $this->userRepo->find(1);
+//        $user->setEmail('other email');
+//
+//        //echo $user->getId();
+//        //echo $user->getEmail();
+//
+//        $result = $user->save();
+//
+//        $this->assertEquals(true, $result);
+//    }
 
     public function testFind(): void
     {
         /** @var User $user */
-        $user = $this->userRepo->find(1);
+        // $user = $this->userRepo->find(1);
+         $user = $this->userRepo->findBy(
+            ["name" => "ciwawa", "email" => "email"],
+            ["id" => "ASC", "name" => "DESC", "email" => ""],
+             1,
+             3
+         );
 
-        $this->assertEquals(1, $user->getId());
+
+        var_dump($user);
+        //$this->assertEquals(1, $user->getId());
     }
 }

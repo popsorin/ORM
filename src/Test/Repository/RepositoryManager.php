@@ -11,9 +11,24 @@ use ReallyOrm\Test\Entity\User;
 
 class RepositoryManager implements RepositoryManagerInterface
 {
+    /**
+     * @var array
+     */
+    private $repositories;
 
-    public function register(EntityInterface $user): void
+    public function __construct(array $repositories)
     {
+        foreach ($repositories as $repository) {
+            $this->repositories[$repository->getEntityName()] = $repository;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function register(EntityInterface $entity): void
+    {
+        $entity->setRepositoryManager($this);
     }
 
     /**
@@ -21,7 +36,7 @@ class RepositoryManager implements RepositoryManagerInterface
      */
     public function getRepository(string $className): RepositoryInterface
     {
-        // TODO: Implement getRepository() method.
+        return $this->repositories[$className];
     }
 
     /**
@@ -29,6 +44,7 @@ class RepositoryManager implements RepositoryManagerInterface
      */
     public function addRepository(RepositoryInterface $repository): RepositoryManagerInterface
     {
-        // TODO: Implement addRepository() method.
+        $this->repositories[$repository->getEntityName()] = $repository;
+        return $this;
     }
 }

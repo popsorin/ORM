@@ -10,6 +10,7 @@ use ReflectionException;
 class Hydrator implements HydratorInterface
 {
     const COLUMN_NAME = 'columnName';
+    const REGEX_MAPPEDON = '/@MappedOn (?<%s>\w+)/m';
 
     /**
      * @inheritDoc
@@ -23,10 +24,7 @@ class Hydrator implements HydratorInterface
         foreach ($props as $prop) {
             $prop->setAccessible(true);
             $docBlock = $prop->getDocComment();
-            //tine regexu in constanta
-            preg_match(sprintf('/@MappedOn (?<%s>\w+)/m', self::COLUMN_NAME), $docBlock, $matches);
-            //var_dump($docBlock);
-            //var_dump($matches);
+            preg_match(sprintf(self::REGEX_MAPPEDON, self::COLUMN_NAME), $docBlock, $matches);
             if(!isset($matches[self::COLUMN_NAME])) {
                 continue;
             }
@@ -51,17 +49,48 @@ class Hydrator implements HydratorInterface
         foreach ($props as $prop) {
             $prop->setAccessible(true);
             $docBlock = $prop->getDocComment();
-            //tine regexu in constanta
-            preg_match(sprintf('/@MappedOn (?<%s>\w+)/m', self::COLUMN_NAME), $docBlock, $matches);
-     //       $extracted[$matches[self::COLUMN_NAME]] =
+            preg_match(sprintf(self::REGEX_MAPPEDON, self::COLUMN_NAME), $docBlock, $matches);
+            if(empty($matches)) {
+                continue;
+            }
+            $extracted[$matches[self::COLUMN_NAME]] = $prop->getValue($object);
         }
+
+        return $extracted;
     }
 
+    public function extractId(EntityInterface $entity): ?int
+    {
+        $reflection = new ReflectionClass(get_class($entity));
+        $props = $reflection->getProperties();
+        foreach ($props as $prop) {
+            $prop->setAccessible(true);
+            $docBlock = $prop->getDocComment();
+            preg_match(sprintf(self::REGEX_MAPPEDON, self::COLUMN_NAME), $docBlock, $matches);
+            if(empty($matches)) {
+                continue;
+            }
+            if($matches[self::COLUMN_NAME] === 'id')
+                return $prop->getValue($entity);
+        }
+
+        return null;
+    }
     /**
      * @inheritDoc
+     * @throws ReflectionException
      */
     public function hydrateId(EntityInterface $entity, int $id): void
     {
-        // TODO: Implement hydrateId() method.
+        $reflection = new ReflectionClass(get_class($entity));
+        $reflectedEntity = $reflection->newInstanceWithoutConstructor();
+        $props = $reflection->getProperties();
+        foreach ($props as $prop) {
+            if($prop->getName() !== 'id') {
+                continue;
+            }
+            $prop->setAccessible(true);
+            $prop->setValue($reflectedEntity, $id);
+        }
     }
 }

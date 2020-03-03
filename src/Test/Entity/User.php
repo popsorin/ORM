@@ -6,6 +6,7 @@ namespace ReallyOrm\Test\Entity;
 
 use ReallyOrm\Entity\AbstractEntity;
 
+
 class User extends AbstractEntity
 {
     /**
@@ -19,4 +20,15 @@ class User extends AbstractEntity
      * @MappedOn email
      */
     private $email;
+
+    public function setName(string $string)
+    {
+        $this->name = $string;
+    }
+
+    public function setEmail(string $string)
+    {
+        $this->email = $string;
+    }
+
 }

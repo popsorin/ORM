@@ -22,6 +22,13 @@ interface HydratorInterface
      */
     public function hydrate(string $className, array $data): EntityInterface;
 
+
+    /**
+     * @param EntityInterface $entity
+     * @return int|null
+     */
+    public function extractId(EntityInterface $entity): ?int;
+
     /**
      * Receives an entity and returns an array in [entity_field_name => value] format.
      *
