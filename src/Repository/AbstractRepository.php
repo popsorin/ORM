@@ -52,12 +52,11 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param string $entityName
      * @param HydratorInterface $hydrator
      */
-    public function __construct(PDO $pdo, string $entityName, HydratorInterface $hydrator, string $tableName)
+    public function __construct(PDO $pdo, string $entityName, HydratorInterface $hydrator)
     {
         $this->pdo = $pdo;
         $this->entityName = $entityName;
         $this->hydrator = $hydrator;
-        $this->tableName = $tableName;
     }
 
     /**
