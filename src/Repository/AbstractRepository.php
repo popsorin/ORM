@@ -40,6 +40,9 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     protected $hydrator;
 
+    /**
+     * @var string
+     */
     protected $tableName;
 
     /**
@@ -49,11 +52,12 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param string $entityName
      * @param HydratorInterface $hydrator
      */
-    public function __construct(PDO $pdo, string $entityName, HydratorInterface $hydrator)
+    public function __construct(PDO $pdo, string $entityName, HydratorInterface $hydrator, string $tableName)
     {
         $this->pdo = $pdo;
         $this->entityName = $entityName;
         $this->hydrator = $hydrator;
+        $this->tableName = $tableName;
     }
 
     /**
@@ -166,7 +170,7 @@ abstract class AbstractRepository implements RepositoryInterface
         $extractedEntity = $this->hydrator->extract($entity);
         $query = $this->ifExists($extractedEntity);
 
-        if ($query->fetch() === false) {
+        if ($query === false) {
             return self::insert($extractedEntity);
         }
         return self::update($extractedEntity);
@@ -206,7 +210,7 @@ abstract class AbstractRepository implements RepositoryInterface
         foreach ($extractedEntity as $key => &$value) {
             $insert .= " :$value,";
         }
-        $insert = substr($insert, 0, -4);
+        $insert = substr($insert, 0, -5);
         $insert .= ");";
         $query = $this->pdo->prepare($insert);
         foreach ($extractedEntity as $key => &$value) {
