@@ -248,4 +248,21 @@ abstract class AbstractRepository implements RepositoryInterface
 
         return $query->fetch();
     }
+
+    public function getCount(array $filters = [])
+    {
+        $select = "SELECT COUNT(id) FROM $this->tableName";
+        if(!empty($filters)) {
+            $select .= " WHERE ";
+
+            foreach ($filters as $key => $filter) {
+                $select .= "$key = :$key AND ";
+            }
+            $select = substr($select, 0, strlen($select) - 4);
+        }
+
+        $query = $this->pdo->prepare($select);
+
+        $query->execute();
+    }
 }
