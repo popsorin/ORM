@@ -203,7 +203,9 @@ abstract class AbstractRepository implements RepositoryInterface
         $insert = substr($insert, 0, -1);
         $insert .= ") VALUES (";
         foreach ($extractedEntity as $key => &$value) {
-            $value = password_hash($value, PASSWORD_DEFAULT);
+            if ($key === 'id') {
+                $value = password_hash($value, PASSWORD_DEFAULT);
+            }
             $insert .= " :$value,";
         }
         $insert = substr($insert, 0, -4);
@@ -221,7 +223,9 @@ abstract class AbstractRepository implements RepositoryInterface
             if ($key === 'id') {
                 continue;
             }
-            $value = password_hash($value, PASSWORD_DEFAULT);
+            if ($key === 'password') {
+                $value = password_hash($value, PASSWORD_DEFAULT);
+            }
             $query->bindParam(":$value", $value);
         }
 
