@@ -95,7 +95,7 @@ abstract class AbstractRepository implements RepositoryInterface
             }
             $select = substr($select, 0, strlen($select) - 4);
         }
-        $select .= "LIMIT 1;";
+        $select .= " LIMIT 1;";
         $query = $this->pdo->prepare($select);
 
         foreach ($filters as $key => &$filter) {
