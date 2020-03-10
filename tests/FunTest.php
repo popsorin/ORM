@@ -46,47 +46,47 @@ class FunTest extends TestCase
 
         $this->pdo = new PDO($dsn, $config['user'], $config['pass'], $options);
         $this->hydrator = new Hydrator();
-        $this->userRepo = new UserRepository($this->pdo, User::class, $this->hydrator);
+        $this->userRepo = new UserRepository($this->pdo, User::class, $this->hydrator, 'user_table');
         $this->repoManager = new RepositoryManager([$this->userRepo]);
     }
-//
-//
-//    public function testCreateUser(): void
-//    {
-//        $user = new User();
-//        $user->setName('Lica');
-//        $user->setEmail('VasiLica');
-//        $user->setId(2);
-//        $this->repoManager->register($user);
-//        $result = $user->save();
-//
-//        $this->assertEquals(true, $result);
-//    }
 
-//    public function testDelete(): void
-//    {
-//        $user = new User();
-//        $user->setName('Lica');
-//        $user->setEmail('VasiLica');
-//        $user->setId(5);
-//        $this->repoManager->register($user);
-//        $deleted = $this->userRepo->delete($user);
-//
-//        $this->assertEquals(true, $deleted);
-//    }
 
-//    public function testUpdateUser()
-//    {
-//        $user = $this->userRepo->find(1);
-//        $user->setEmail('other email');
-//
-//        //echo $user->getId();
-//        //echo $user->getEmail();
-//
-//        $result = $user->save();
-//
-//        $this->assertEquals(true, $result);
-//    }
+    public function testCreateUser(): void
+    {
+        $user = new User();
+        $user->setName('Lica');
+        $user->setEmail('VasiLica');
+        $user->setId(2);
+        $this->repoManager->register($user);
+        $result = $user->save();
+
+        $this->assertEquals(true, $result);
+    }
+
+    public function testDelete(): void
+    {
+        $user = new User();
+        $user->setName('Lica');
+        $user->setEmail('VasiLica');
+        $user->setId(8);
+        $this->repoManager->register($user);
+        $deleted = $this->userRepo->delete($user);
+
+        $this->assertEquals(true, $deleted);
+    }
+
+    public function testUpdateUser()
+    {
+        $user = $this->userRepo->find(1);
+        $user->setEmail('other email');
+
+        //echo $user->getId();
+        //echo $user->getEmail();
+
+        $result = $user->save();
+
+        $this->assertEquals(true, $result);
+    }
 
     public function testFind(): void
     {
@@ -101,6 +101,6 @@ class FunTest extends TestCase
 
 
         var_dump($user);
-        //$this->assertEquals(1, $user->getId());
+        $this->assertEquals(1, $user->getId());
     }
 }

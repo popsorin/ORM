@@ -243,4 +243,3 @@ abstract class AbstractRepository implements RepositoryInterface
         $query->execute();
     }
 }
-

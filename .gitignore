@@ -14,8 +14,5 @@ composer.lock
 # We don't commit IDE configuration, you're a jerk if you do that, let people use what they want, dammit
 /.idea/*
 
-# You really shouldn't ignore things from the /src folder, but I really don't want you to see what Andra & I wrote here :))
-/src/Test/*
-
 # Fuck caches and their invalidation
 .phpunit.result.cache
