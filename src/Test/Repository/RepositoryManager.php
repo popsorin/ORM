@@ -26,14 +26,6 @@ class RepositoryManager implements RepositoryManagerInterface
     /**
      * @inheritDoc
      */
-    public function register(EntityInterface $entity): void
-    {
-        $entity->setRepositoryManager($this);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getRepository(string $className): RepositoryInterface
     {
         return $this->repositories[$className];

@@ -4,6 +4,8 @@ namespace ReallyOrm\Test\Hydrator;
 
 use ReallyOrm\Entity\EntityInterface;
 use ReallyOrm\Hydrator\HydratorInterface;
+use ReallyOrm\Repository\RepositoryManagerInterface;
+use ReallyOrm\Test\Repository\RepositoryManager;
 use ReflectionClass;
 use ReflectionException;
 
@@ -11,6 +13,16 @@ class Hydrator implements HydratorInterface
 {
     const COLUMN_NAME = 'columnName';
     const REGEX_MAPPEDON = '/@MappedOn (?<%s>\w+)/m';
+
+    /**
+     * @var RepositoryManagerInterface
+     */
+    private $repository;
+
+    public function __construct(RepositoryManagerInterface $repositoryManager)
+    {
+        $this->repository = $repositoryManager;
+    }
 
     /**
      * @inheritDoc

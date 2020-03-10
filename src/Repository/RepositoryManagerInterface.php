@@ -14,17 +14,6 @@ use ReallyOrm\Entity\EntityInterface;
 interface RepositoryManagerInterface
 {
     /**
-     * To implement Active Record, an entity has to perform CRUD operations.
-     *
-     * The actual database calls are the responsibility of its repository, which is provided by the repository manager.
-     *
-     * The calls will only be made after the entity is registered with the repository manager.
-     *
-     * @param EntityInterface $entity
-     */
-    public function register(EntityInterface $entity): void;
-
-    /**
      * Returns the repository for an entity.
      *
      * @param string $className The entity's class name.

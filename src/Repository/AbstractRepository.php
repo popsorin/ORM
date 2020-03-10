@@ -126,6 +126,7 @@ abstract class AbstractRepository implements RepositoryInterface
             }
             $select = substr($select, 0, strlen($select) - 4);
         }
+
         if(!empty($sorts)){
             $select .= " ORDER BY ";
 
@@ -139,12 +140,11 @@ abstract class AbstractRepository implements RepositoryInterface
         }
 
         if($size !== null || $size !== 0) {
-            $select .= "LIMIT $size ";
+            $select .= " LIMIT $size ";
             if($from !== null || $from !== 0) {
                 $select .= "OFFSET $from ";
             }
         }
-        $select .= ";";
 
         $query = $this->pdo->prepare($select);
 
@@ -167,12 +167,8 @@ abstract class AbstractRepository implements RepositoryInterface
     public function insertOnDuplicateKeyUpdate(EntityInterface $entity): bool
     {
         $extractedEntity = $this->hydrator->extract($entity);
-        $query = $this->ifExists($extractedEntity);
 
-        if ($query === false) {
-            return self::insert($extractedEntity);
-        }
-        return self::update($extractedEntity);
+        return self::insert($extractedEntity);
     }
 
     /**
@@ -209,8 +205,16 @@ abstract class AbstractRepository implements RepositoryInterface
         foreach ($extractedEntity as $key => &$value) {
             $insert .= " :$value,";
         }
-        $insert = substr($insert, 0, -5);
-        $insert .= ");";
+        $insert = substr($insert, 0, -4);
+        $insert .= ") ON DUPLICATE KEY UPDATE ";
+        foreach ($extractedEntity as $key => &$value) {
+            if ($value === null) {
+                continue;
+            }
+            $insert .= "$key = VALUES($key),";
+        }
+        $insert = substr($insert, 0, -1);
+        $insert .= ";";
         $query = $this->pdo->prepare($insert);
         foreach ($extractedEntity as $key => &$value) {
             if ($key === 'id') {
@@ -220,33 +224,6 @@ abstract class AbstractRepository implements RepositoryInterface
         }
 
         return $query->execute();
-    }
-
-    public function update(array $extractedEntity)
-    {
-        $insert = "UPDATE $this->tableName SET ";
-        foreach ($extractedEntity as $key => $value) {
-            if ($key === 'id') {
-                continue;
-            }
-            $insert .= " $key=:$key,";
-        }
-        $insert = substr($insert, 0, -1);
-        $insert .= " WHERE id=:id;";
-        $query = $this->pdo->prepare($insert);
-        foreach ($extractedEntity as $key => &$value) {
-            $query->bindParam(":$key", $value);
-        }
-        return $query->execute();
-    }
-
-    public function ifExists(array $extractedEntity)
-    {
-        $query = $this->pdo->prepare("SELECT * FROM $this->tableName WHERE id = :id");
-        $query->bindParam(":id", $extractedEntity['id']);
-        $query->execute();
-
-        return $query->fetch();
     }
 
     public function getCount(array $filters = [])
@@ -266,3 +243,4 @@ abstract class AbstractRepository implements RepositoryInterface
         $query->execute();
     }
 }
+
