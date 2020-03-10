@@ -95,7 +95,7 @@ abstract class AbstractRepository implements RepositoryInterface
             }
             $select = substr($select, 0, strlen($select) - 4);
         }
-        $select .= "LIMIT 1;";
+        $select .= " LIMIT 1;";
         $query = $this->pdo->prepare($select);
 
         foreach ($filters as $key => &$filter) {
@@ -218,6 +218,11 @@ abstract class AbstractRepository implements RepositoryInterface
         $query = $this->pdo->prepare($insert);
         foreach ($extractedEntity as $key => &$value) {
             if ($key === 'id') {
+                continue;
+            }
+            if($key === "password") {
+                $hash = password_hash($value, PASSWORD_DEFAULT);
+                $query->bindParam(":$value", $hash);
                 continue;
             }
             $query->bindParam(":$value", $value);
