@@ -180,7 +180,7 @@ abstract class AbstractRepository implements RepositoryInterface
         if($id === null) {
             return false;
         }
-        $query = $this->pdo->prepare("DELETE FROM user_table WHERE id = :id");
+        $query = $this->pdo->prepare("DELETE FROM $this->tableName WHERE id = :id");
         $query->bindParam(":id", $id);
         $query->execute();
         return $query->rowCount() > 0;
@@ -195,37 +195,42 @@ abstract class AbstractRepository implements RepositoryInterface
     {
         $insert = "INSERT INTO $this->tableName (";
         foreach ($extractedEntity as $key => $value) {
-            if ($key === 'id') {
+            if ($value === "" || $value === null) {
                 continue;
             }
-            $insert .= " $key,";
+            $insert .= " `$key`,";
         }
         $insert = substr($insert, 0, -1);
         $insert .= ") VALUES (";
         foreach ($extractedEntity as $key => &$value) {
-            $insert .= " :$value,";
-        }
-        $insert = substr($insert, 0, -4);
-        $insert .= ") ON DUPLICATE KEY UPDATE ";
-        foreach ($extractedEntity as $key => &$value) {
-            if ($value === null) {
+            if ($value === "" || $value === null) {
                 continue;
             }
-            $insert .= "$key = VALUES($key),";
+            $insert .= " ?,";
         }
         $insert = substr($insert, 0, -1);
-        $insert .= ";";
+        $insert .= ") ON DUPLICATE KEY UPDATE ";
+        foreach ($extractedEntity as $key => &$value) {
+            if ( $value === "" || $value === null) {
+                continue;
+            }
+            $insert .= "`$key` = VALUES(`$key`),";
+        }
+        $insert = substr($insert, 0, -1);
+        $count = 1;
         $query = $this->pdo->prepare($insert);
         foreach ($extractedEntity as $key => &$value) {
-            if ($key === 'id') {
+            if ($value === "" || $value === null) {
                 continue;
             }
             if($key === "password") {
                 $hash = password_hash($value, PASSWORD_DEFAULT);
-                $query->bindParam(":$value", $hash);
+                $query->bindValue($count, $key);
+                $count++;
                 continue;
             }
-            $query->bindParam(":$value", $value);
+            $query->bindValue($count, $value);
+            $count++;
         }
 
         return $query->execute();
