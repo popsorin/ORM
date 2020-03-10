@@ -68,5 +68,5 @@ interface RepositoryInterface
      */
     public function getEntityName(): string;
 
-    public function getCount(): int;
+    public function getCount(): ?int;
 }

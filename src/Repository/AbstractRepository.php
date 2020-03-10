@@ -236,7 +236,7 @@ abstract class AbstractRepository implements RepositoryInterface
         return $query->execute();
     }
 
-    public function getCount(array $filters = [])
+    public function getCount(array $filters = []): ?int
     {
         $select = "SELECT COUNT(id) FROM $this->tableName";
         if(!empty($filters)) {
