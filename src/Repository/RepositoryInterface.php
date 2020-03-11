@@ -62,11 +62,20 @@ interface RepositoryInterface
     public function delete(EntityInterface $entity) : bool;
 
     /**
+     * @param int|null $id
+     * @return mixed
+     */
+    public function deleteById(?int $id): bool;
+
+    /**
      * Returns the name of the entity associated with the repository.
      *
      * @return string
      */
     public function getEntityName(): string;
 
+    /**
+     * @return int|null
+     */
     public function getCount(): ?int;
 }
