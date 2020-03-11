@@ -259,9 +259,10 @@ abstract class AbstractRepository implements RepositoryInterface
             }
             $select = substr($select, 0, strlen($select) - 4);
         }
-
         $query = $this->pdo->prepare($select);
 
         $query->execute();
+
+        return $query->fetch()["COUNT(id)"];
     }
 }
