@@ -187,6 +187,18 @@ abstract class AbstractRepository implements RepositoryInterface
     }
 
     /**
+     * @param int $id
+     * @return bool
+     */
+    public function deleteById(int $id): bool
+    {
+        $query = $this->pdo->prepare("DELETE FROM $this->tableName WHERE id = :id");
+        $query->bindParam(":id", $id);
+        $query->execute();
+        return $query->rowCount() > 0;
+    }
+
+    /**
      * takes the values from the input array and inserts them into the database
      * @param array $extractedEntity
      * @return bool
