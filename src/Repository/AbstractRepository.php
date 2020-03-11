@@ -139,9 +139,9 @@ abstract class AbstractRepository implements RepositoryInterface
             $select = substr($select, 0, -2);
         }
 
-        if($size !== null || $size !== 0) {
+        if($size !== null && $size !== 0) {
             $select .= " LIMIT $size ";
-            if($from !== null || $from !== 0) {
+            if($from !== null && $from !== 0) {
                 $select .= "OFFSET $from ";
             }
         }
