@@ -237,7 +237,7 @@ abstract class AbstractRepository implements RepositoryInterface
             }
             if($key === "password") {
                 $hash = password_hash($value, PASSWORD_DEFAULT);
-                $query->bindValue($count, $key);
+                $query->bindValue($count, $hash);
                 $count++;
                 continue;
             }
