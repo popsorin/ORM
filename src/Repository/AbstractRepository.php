@@ -168,7 +168,7 @@ abstract class AbstractRepository implements RepositoryInterface
     {
         $extractedEntity = $this->hydrator->extract($entity);
 
-        return self::insert($extractedEntity);
+        return self::insert($extractedEntity, $entity);
     }
 
     /**
@@ -203,7 +203,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param array $extractedEntity
      * @return bool
      */
-    public function insert(array $extractedEntity)
+    public function insert(array $extractedEntity, EntityInterface $entity)
     {
         $insert = "INSERT INTO $this->tableName (";
         foreach ($extractedEntity as $key => $value) {
@@ -245,7 +245,11 @@ abstract class AbstractRepository implements RepositoryInterface
             $count++;
         }
 
-        return $query->execute();
+
+        $result = $query->execute();
+        $entity->setId($this->pdo->lastInsertId());
+
+        return $result;
     }
 
     public function getCount(array $filters = []): ?int
@@ -259,6 +263,7 @@ abstract class AbstractRepository implements RepositoryInterface
             }
             $select = substr($select, 0, strlen($select) - 4);
         }
+
         $query = $this->pdo->prepare($select);
 
         $query->execute();
