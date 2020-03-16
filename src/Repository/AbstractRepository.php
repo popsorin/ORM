@@ -89,8 +89,8 @@ abstract class AbstractRepository implements RepositoryInterface
         if (!empty($filters)) {
             $select .= " WHERE ";
 
-            foreach ($filters as $key => $filter) {
-                $select .= "$key = :$key AND ";
+            foreach ($filters as $key => &$filter) {
+                $select .= "$filter = :$filter AND ";
             }
             $select = substr($select, 0, strlen($select) - 4);
         }
@@ -102,10 +102,7 @@ abstract class AbstractRepository implements RepositoryInterface
         }
 
         $query->execute();
-        $row = $query->fetch();
-        if ($row === false) {
-            throw new \Exception("User not found,sorry");
-        }
+        $row = ($query->fetch() !== false) ? $query->fetch() : [] ;
 
         return $this->hydrator->hydrate($this->getEntityName(), $row);
     }
@@ -182,10 +179,8 @@ abstract class AbstractRepository implements RepositoryInterface
         }
 
         $query->execute();
-        $row = $query->fetch();
-        if ($row === false) {
-            throw new \Exception("User not found,sorry");
-        }
+        $query->execute();
+        $row = ($query->fetch() !== false) ? $query->fetch() : [] ;
 
         return $this->hydrator->hydrate($this->getEntityName(), $row);
     }
