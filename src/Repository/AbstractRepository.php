@@ -163,9 +163,6 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * @inheritDoc
      */
-    /**
-     * @inheritDoc
-     */
     public function findOneByWithOrOperator(array $filters): ?EntityInterface
     {
         $select = "SELECT * FROM $this->tableName";
