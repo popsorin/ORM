@@ -80,7 +80,6 @@ abstract class AbstractRepository implements RepositoryInterface
     }
 
     /**
-     *
      * @inheritDoc
      */
     public function findOneBy(array $filters): ?EntityInterface
@@ -164,7 +163,10 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * @inheritDoc
      */
-    public function findByWithOrOperator(array $filters, array $sorts, int $from, int $size): array
+    /**
+     * @inheritDoc
+     */
+    public function findOneByWithOrOperator(array $filters): ?EntityInterface
     {
         $select = "SELECT * FROM $this->tableName";
 
@@ -176,39 +178,19 @@ abstract class AbstractRepository implements RepositoryInterface
             }
             $select = substr($select, 0, strlen($select) - 4);
         }
-
-        if(!empty($sorts)){
-            $select .= " ORDER BY ";
-
-            foreach ($sorts as $key => $direction) {
-                if (strcmp($direction, "ASC")!==0 && strcmp($direction, "DESC")!==0){
-                    continue;
-                }
-                $select .= " $key $direction , ";
-            }
-            $select = substr($select, 0, -2);
-        }
-
-        if($size !== null && $size !== 0) {
-            $select .= " LIMIT $size ";
-            if($from !== null && $from !== 0) {
-                $select .= "OFFSET $from ";
-            }
-        }
-
         $query = $this->pdo->prepare($select);
 
         foreach ($filters as $key => &$filter) {
             $query->bindParam(":$key", $filter);
         }
-        $query->execute();
 
-        $arrayFound = [];
-        while($row = $query->fetch()){
-            array_push($arrayFound, $this->hydrator->hydrate($this->getEntityName(), $row));
+        $query->execute();
+        $row = $query->fetch();
+        if ($row === false) {
+            throw new \Exception("User not found,sorry");
         }
 
-        return $arrayFound;
+        return $this->hydrator->hydrate($this->getEntityName(), $row);
     }
 
     /**
