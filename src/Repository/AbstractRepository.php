@@ -164,6 +164,56 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * @inheritDoc
      */
+    public function findByWithOrOperator(array $filters, array $sorts, int $from, int $size): array
+    {
+        $select = "SELECT * FROM $this->tableName";
+
+        if (!empty($filters)) {
+            $select .= " WHERE ";
+
+            foreach ($filters as $key => $filter) {
+                $select .= "$key = :$key OR ";
+            }
+            $select = substr($select, 0, strlen($select) - 4);
+        }
+
+        if(!empty($sorts)){
+            $select .= " ORDER BY ";
+
+            foreach ($sorts as $key => $direction) {
+                if (strcmp($direction, "ASC")!==0 && strcmp($direction, "DESC")!==0){
+                    continue;
+                }
+                $select .= " $key $direction , ";
+            }
+            $select = substr($select, 0, -2);
+        }
+
+        if($size !== null && $size !== 0) {
+            $select .= " LIMIT $size ";
+            if($from !== null && $from !== 0) {
+                $select .= "OFFSET $from ";
+            }
+        }
+
+        $query = $this->pdo->prepare($select);
+
+        foreach ($filters as $key => &$filter) {
+            $query->bindParam(":$key", $filter);
+        }
+        $query->execute();
+
+        $arrayFound = [];
+        while($row = $query->fetch()){
+            array_push($arrayFound, $this->hydrator->hydrate($this->getEntityName(), $row));
+        }
+
+        return $arrayFound;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function insertOnDuplicateKeyUpdate(EntityInterface $entity): bool
     {
         $extractedEntity = $this->hydrator->extract($entity);
