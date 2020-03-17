@@ -102,7 +102,8 @@ abstract class AbstractRepository implements RepositoryInterface
         }
 
         $query->execute();
-        $row = ($query->fetch() !== false) ? $query->fetch() : [] ;
+        $result = $query->fetch();
+        $row = ($result !== false) ? $result : [] ;
 
         return $this->hydrator->hydrate($this->getEntityName(), $row);
     }
@@ -157,32 +158,27 @@ abstract class AbstractRepository implements RepositoryInterface
         return $arrayFound;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function findOneByWithOrOperator(array $filters): ?EntityInterface
+
+    public function ifExists(array $filters): bool
     {
         $select = "SELECT * FROM $this->tableName";
 
         if (!empty($filters)) {
             $select .= " WHERE ";
-
-            foreach ($filters as $key => $filter) {
+            foreach ($filters as $key => &$filter) {
                 $select .= "$key = :$key OR ";
             }
-            $select = substr($select, 0, strlen($select) - 4);
+            $select = substr($select, 0, strlen($select) - 3);
         }
         $query = $this->pdo->prepare($select);
 
         foreach ($filters as $key => &$filter) {
             $query->bindParam(":$key", $filter);
         }
-
         $query->execute();
-        $query->execute();
-        $row = ($query->fetch() !== false) ? $query->fetch() : [] ;
+        $row = $query->fetch();
 
-        return $this->hydrator->hydrate($this->getEntityName(), $row);
+        return ($row !== false) ? true : $row;
     }
 
     /**
