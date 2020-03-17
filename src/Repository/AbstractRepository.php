@@ -158,7 +158,10 @@ abstract class AbstractRepository implements RepositoryInterface
         return $arrayFound;
     }
 
-
+    /**
+     * @param array $filters
+     * @return bool
+     */
     public function ifExists(array $filters): bool
     {
         $select = "SELECT * FROM $this->tableName";
