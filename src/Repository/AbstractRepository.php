@@ -152,7 +152,61 @@ abstract class AbstractRepository implements RepositoryInterface
 
         $arrayFound = [];
         while($row = $query->fetch()){
-            array_push($arrayFound, $this->hydrator->hydrate($this->getEntityName(), $row));
+           $arrayFound[]= $this->hydrator->hydrate($this->getEntityName(), $row);
+        }
+
+        return $arrayFound;
+    }
+
+    /**
+     * @param array $filters
+     * @param array $sorts
+     * @param int $from
+     * @param int $size
+     * @return array|null
+     */
+    public function findByWithOrOperator(array $filters, array $sorts, int $from, int $size): ?array
+    {
+        $select = "SELECT * FROM $this->tableName";
+
+        if (!empty($filters)) {
+            $select .= " WHERE ";
+
+            foreach ($filters as $key => $filter) {
+                $select .= "$key = :$key OR ";
+            }
+            $select = substr($select, 0, strlen($select) - 3);
+        }
+
+        if(!empty($sorts)){
+            $select .= " ORDER BY ";
+
+            foreach ($sorts as $key => $direction) {
+                if (strcmp($direction, "ASC")!==0 && strcmp($direction, "DESC")!==0){
+                    continue;
+                }
+                $select .= " $key $direction , ";
+            }
+            $select = substr($select, 0, -2);
+        }
+
+        if($size !== null && $size !== 0) {
+            $select .= " LIMIT $size ";
+            if($from !== null && $from !== 0) {
+                $select .= "OFFSET $from ";
+            }
+        }
+
+        $query = $this->pdo->prepare($select);
+
+        foreach ($filters as $key => &$filter) {
+            $query->bindParam(":$key", $filter);
+        }
+        $query->execute();
+
+        $arrayFound = [];
+        while($row = $query->fetch()){
+            $arrayFound[]= $this->hydrator->hydrate($this->getEntityName(), $row);
         }
 
         return $arrayFound;
@@ -164,24 +218,7 @@ abstract class AbstractRepository implements RepositoryInterface
      */
     public function ifExists(array $filters): bool
     {
-        $select = "SELECT * FROM $this->tableName";
-
-        if (!empty($filters)) {
-            $select .= " WHERE ";
-            foreach ($filters as $key => &$filter) {
-                $select .= "$key = :$key OR ";
-            }
-            $select = substr($select, 0, strlen($select) - 3);
-        }
-        $query = $this->pdo->prepare($select);
-
-        foreach ($filters as $key => &$filter) {
-            $query->bindParam(":$key", $filter);
-        }
-        $query->execute();
-        $row = $query->fetch();
-
-        return ($row !== false) ? true : $row;
+        return ($this->findByWithOrOperator($filters, [], 0, 0)) ? true : false;
     }
 
     /**
