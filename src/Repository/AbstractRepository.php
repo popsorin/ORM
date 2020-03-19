@@ -213,15 +213,6 @@ abstract class AbstractRepository implements RepositoryInterface
     }
 
     /**
-     * @param array $filters
-     * @return bool
-     */
-    public function ifExists(array $filters): bool
-    {
-        return ($this->findByWithOrOperator($filters, [], 0, 0)) ? true : false;
-    }
-
-    /**
      * @inheritDoc
      */
     public function insertOnDuplicateKeyUpdate(EntityInterface $entity): bool
