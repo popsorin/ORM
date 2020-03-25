@@ -90,7 +90,7 @@ abstract class AbstractRepository implements RepositoryInterface
             $select .= " WHERE ";
 
             foreach ($filters as $key => &$filter) {
-                $select .= "$filter = :$filter AND ";
+                $select .= "$key = :$key AND ";
             }
             $select = substr($select, 0, strlen($select) - 4);
         }
