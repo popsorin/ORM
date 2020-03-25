@@ -90,7 +90,7 @@ abstract class AbstractRepository implements RepositoryInterface
             $select .= " WHERE ";
 
             foreach ($filters as $key => &$filter) {
-                $select .= "$filter = :$filter AND ";
+                $select .= "$key = :$key AND ";
             }
             $select = substr($select, 0, strlen($select) - 4);
         }
@@ -210,15 +210,6 @@ abstract class AbstractRepository implements RepositoryInterface
         }
 
         return $arrayFound;
-    }
-
-    /**
-     * @param array $filters
-     * @return bool
-     */
-    public function ifExists(array $filters): bool
-    {
-        return ($this->findByWithOrOperator($filters, [], 0, 0)) ? true : false;
     }
 
     /**
