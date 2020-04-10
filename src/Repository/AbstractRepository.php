@@ -275,7 +275,6 @@ abstract class AbstractRepository implements RepositoryInterface
             $query->bindValue($key, $value);
         }
 
-
         $query->execute();
 
         return $query->fetch()["COUNT(id)"];
