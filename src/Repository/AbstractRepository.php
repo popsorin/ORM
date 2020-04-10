@@ -252,6 +252,7 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * takes the values from the input array and inserts them into the database
      * @param array $extractedEntity
+     * @param EntityInterface $entity
      * @return bool
      */
     public function insert(array $extractedEntity, EntityInterface $entity)
@@ -305,9 +306,9 @@ abstract class AbstractRepository implements RepositoryInterface
 
     /**
      * @param array $filters
-     * @return int|null
+     * @return int
      */
-    public function getCount(array $filters): ?int
+    public function getCount(array $filters): int
     {
         $select = "SELECT COUNT(id) FROM $this->tableName";
         if(!empty($filters)) {
@@ -320,6 +321,10 @@ abstract class AbstractRepository implements RepositoryInterface
         }
 
         $query = $this->pdo->prepare($select);
+
+        foreach ($filters as $key => &$value) {
+            $query->bindValue($key, $value);
+        }
 
         $query->execute();
 
