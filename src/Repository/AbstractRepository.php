@@ -270,6 +270,14 @@ abstract class AbstractRepository implements RepositoryInterface
 
         $query = $this->pdo->prepare($select);
 
+        foreach ($filters as $key => &$value) {
+            if ($value === "" || $value === null) {
+                continue;
+            }
+            $query->bindValue($key, $value);
+        }
+
+
         $query->execute();
 
         return $query->fetch()["COUNT(id)"];
