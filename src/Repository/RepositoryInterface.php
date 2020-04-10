@@ -75,8 +75,7 @@ interface RepositoryInterface
     public function getEntityName(): string;
 
     /**
-     * @param array $filters
      * @return int|null
      */
-    public function getCount(array $filters): ?int;
+    public function getCount(): ?int;
 }
