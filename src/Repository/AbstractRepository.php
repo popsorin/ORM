@@ -201,6 +201,7 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * takes the values from the input array and inserts them into the database
      * @param array $extractedEntity
+     * @param EntityInterface $entity
      * @return bool
      */
     public function insert(array $extractedEntity, EntityInterface $entity)
@@ -271,9 +272,6 @@ abstract class AbstractRepository implements RepositoryInterface
         $query = $this->pdo->prepare($select);
 
         foreach ($filters as $key => &$value) {
-            if ($value === "" || $value === null) {
-                continue;
-            }
             $query->bindValue($key, $value);
         }
 
