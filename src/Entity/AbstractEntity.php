@@ -53,7 +53,7 @@ abstract class AbstractEntity implements EntityInterface
      * @param EntityInterface $entity
      * @return bool
      */
-    public function delete(EntityInterface $entity): \b
+    public function delete(EntityInterface $entity): bool
     {
         return $this->repositoryManager->getRepository($entity->getEntityName())->delete($entity);
     }
