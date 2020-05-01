@@ -11,4 +11,5 @@ namespace ReallyOrm\Entity;
  */
 interface EntityInterface
 {
+    public function getEntityName(): string;
 }
